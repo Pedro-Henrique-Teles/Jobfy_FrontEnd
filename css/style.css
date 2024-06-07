@@ -1,0 +1,11 @@
+
+
+body {
+        background-image: url(../img/Pexels\ Photo\ by\ Neo.png);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
+        font-family: "Lato", sans-serif;
+        padding-top: 70px;
+    }
