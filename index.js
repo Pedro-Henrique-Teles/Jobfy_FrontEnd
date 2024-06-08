@@ -17,14 +17,59 @@ function listarColaboradores() {
                 html += `<td>` + data.areaInteresse + `</td>`;
                 html += `<td>` + data.cargaHoraria + `</td>`;
                 html += `<td>` + date + `</td>`;
+                html += `<td>`;
+                html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'))"><i class="fa fa-edit"></i></button> `;
+                html += `<a href="#" onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></a>`;
+                html += `</td></tr>`;
             });
 
             $("#TableColaboratorBody").html(html);
 
-            // Inicialize a tabela como uma tabela DataTables aqui
+            // Inicialização da Tabela
             $('#TableColaborator').DataTable();
         }
     });
 }
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getUTCMonth() + 1),
+        day = '' + d.getUTCDate(),
+        year = d.getUTCFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+function preencherModal(data) {
+    data = JSON.parse(data);
+    console.log(data);
+    $("#nome").val(data.name);
+    $("#email").val(data.email);
+    $("#cpf").val(data.cpf);
+    $("#telefone").val(data.telefone);
+    $("#salario").val(data.salario);
+    $("#areaInteresse").val(data.areaInteresse);
+    $("#cargaHoraria").val(data.cargaHoraria);
+    $("#dataNascimento").val(formatDate(new Date(data.dataNascimento)));
+}
+
+function limparModal() {
+    $("#nome").val('');
+    $("#email").val('');
+    $("#cpf").val('');
+    $("#telefone").val('');
+    $("#salario").val('');
+    $("#areaInteresse").val('');
+    $("#cargaHoraria").val('');
+    $("#dataNascimento").val('');
+}
+
+$("#modalCadastro").click(limparModal);
+
+
+
 
 $(document).ready(listarColaboradores);
