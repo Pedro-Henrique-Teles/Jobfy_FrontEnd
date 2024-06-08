@@ -94,5 +94,33 @@ $(document).ready(function () {
             $("#input-cpf").val(data.cpf);
         }
     })
+});
 
+
+$("#salvarBotao").click(function(event) {
+    event.preventDefault();
+
+    var data = {
+        'name': $("#nome").val(),
+        'email': $("#email").val(),
+        'cpf': $("#cpf").val(),
+        'telefone': $("#telefone").val(),
+        'salario': $("#salario").val(),
+        'areaInteresse': $("#areaInteresse").val(),
+        'cargaHoraria': $("#cargaHoraria").val(),
+        'dataNascimento': $("#dataNascimento").val()
+    };
+
+    $.ajax({
+        url: 'http://localhost:8080/api/colaborador/' + data.id,
+        type: 'PUT',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(response) {
+            // Atualize a tabela ou faça algo com a resposta
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
 });
