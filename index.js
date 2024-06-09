@@ -17,7 +17,8 @@ function listarColaboradores() {
                 html += `<td>` + data.areaInteresse + `</td>`;
                 html += `<td>` + data.cargaHoraria + `</td>`;
                 html += `<td>` + date + `</td>`;
-                html += `<td>`;
+                html += `<td>` + data.empresa.name + `</td>`;
+                html += `<td>`; 
                 html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'))"><i class="fa fa-edit"></i></button> `;
                 html += `<a href="#" onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></a>`;
                 html += `</td></tr>`;
@@ -30,6 +31,24 @@ function listarColaboradores() {
         }
     });
 }
+
+function listarEmpresas() {
+    $.ajax({
+        url: 'http://localhost:8080/api/empresa', 
+        type: 'get',
+        dataType: 'json',
+        success: function (result) {
+            var select = $('#nomeEempresa'); 
+            $.each(result, function (i, data) {
+                select.append($('<option>', {
+                    value: data.id,
+                    text: data.name
+                }));
+            });
+        }
+    });
+}
+
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getUTCMonth() + 1),
@@ -54,6 +73,8 @@ function preencherModal(data) {
     $("#areaInteresse").val(data.areaInteresse);
     $("#cargaHoraria").val(data.cargaHoraria);
     $("#dataNascimento").val(formatDate(new Date(data.dataNascimento)));
+    $("#nomeEmpresa").val(data.empresa.name);
+    
 }
 
 function limparModal() {
@@ -65,6 +86,7 @@ function limparModal() {
     $("#areaInteresse").val('');
     $("#cargaHoraria").val('');
     $("#dataNascimento").val('');
+    $('#nomeEmpresa').val('');
 }
 
 $("#modalCadastro").click(limparModal);
