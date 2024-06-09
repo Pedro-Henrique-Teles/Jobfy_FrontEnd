@@ -6,7 +6,7 @@ function listarColaboradores() {
         success: function (result) {
             console.log(result);
             var html = '';
-            $.each(result, function (i, data) {
+            $.each(result, function (_i, data) {
                 var datetime = new Date(data.dataNascimento);
                 var date = datetime.toISOString().split('T')[0];
                 html += `<tr><td>` + data.name + `</td>`;
@@ -15,11 +15,12 @@ function listarColaboradores() {
                 html += `<td>` + data.telefone + `</td>`;
                 html += `<td>` + data.salario + `</td>`;
                 html += `<td>` + data.areaInteresse + `</td>`;
+                html += `<td>` + data.escolaridade + `</td>`;
                 html += `<td>` + data.cargaHoraria + `</td>`;
                 html += `<td>` + date + `</td>`;
-                html += `<td>` + data.empresa.name + `</td>`;
+                html += `<td>` + data.empresa.id + `</td>`;
                 html += `<td>`; 
-                html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'))"><i class="fa fa-edit"></i></button> `;
+                html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'), ` + data.id + `)"><i class="fa fa-edit"></i></button> `;
                 html += `<a href="#" onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></a>`;
                 html += `</td></tr>`;
             });
@@ -32,22 +33,6 @@ function listarColaboradores() {
     });
 }
 
-function listarEmpresas() {
-    $.ajax({
-        url: 'http://localhost:8080/api/empresa', 
-        type: 'get',
-        dataType: 'json',
-        success: function (result) {
-            var select = $('#nomeEempresa'); 
-            $.each(result, function (i, data) {
-                select.append($('<option>', {
-                    value: data.id,
-                    text: data.name
-                }));
-            });
-        }
-    });
-}
 
 function formatDate(date) {
     var d = new Date(date),
@@ -62,7 +47,7 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
-function preencherModal(data) {
+function preencherModal(data, id) {
     data = JSON.parse(data);
     console.log(data);
     $("#nome").val(data.name);
@@ -71,11 +56,14 @@ function preencherModal(data) {
     $("#telefone").val(data.telefone);
     $("#salario").val(data.salario);
     $("#areaInteresse").val(data.areaInteresse);
+    $("#escolaridade").val(data.areaInteresse);
     $("#cargaHoraria").val(data.cargaHoraria);
     $("#dataNascimento").val(formatDate(new Date(data.dataNascimento)));
-    $("#nomeEmpresa").val(data.empresa.name);
-    
+    $("#idEmpresa").val(data.empresa.id);
+    colaboradorId = id;
+    console.log(colaboradorId);
 }
+
 
 function limparModal() {
     $("#nome").val('');
@@ -85,13 +73,58 @@ function limparModal() {
     $("#salario").val('');
     $("#areaInteresse").val('');
     $("#cargaHoraria").val('');
+    $("#escolaridade").val('');
     $("#dataNascimento").val('');
-    $('#nomeEmpresa').val('');
+    $('#idEmpresa').val('');
 }
 
 $("#modalCadastro").click(limparModal);
 
-
-
-
 $(document).ready(listarColaboradores);
+
+var colaboradorId = null;
+
+$("#salvarBotao").click(function(event) {
+    event.preventDefault();
+
+    var colaborador = {
+        'name': $("#nome").val(),
+        'email': $("#email").val(),
+        'cpf': $("#cpf").val(),
+        'telefone': $("#telefone").val(),
+        'salario': $("#salario").val(),
+        'areaInteresse': $("#areaInteresse").val(),
+        'cargaHoraria': $("#cargaHoraria").val(),
+        'escolaridade': $("#escolaridade").val(),
+        'dataNascimento': $("#dataNascimento").val(),
+        'empresa': {
+            'id': $("#idEmpresa").val()
+        }
+    };
+
+    var url = 'http://localhost:8080/api/colaborador';
+    var type = 'post';
+
+    if (colaboradorId !== null) {
+        url += '/' + colaboradorId;
+        type = 'put';
+    }
+
+    $.ajax({
+        url: url,
+        type: type,
+        contentType: 'application/json',
+        data: JSON.stringify(colaborador),
+        success: function() {
+            var message = colaboradorId === null ? 'Colaborador criado com sucesso!' : 'Colaborador atualizado com sucesso!';
+            alert(message);
+            $('#myModal').modal('hide');
+            listarColaboradores();
+            colaboradorId = null;  // Limpe o colaboradorId após a operação bem-sucedida
+        },
+        error: function() {
+            var message = colaboradorId === null ? 'Erro ao criar o colaborador!' : 'Erro ao atualizar o colaborador!';
+            alert(message);
+        }
+    });
+});

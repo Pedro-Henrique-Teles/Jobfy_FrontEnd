@@ -35,8 +35,9 @@
                 <th>Salario</th>
                 <th>Area de Interesse</th>
                 <th>Carga Horaria</th>
+                <th>escolaridade</th>
                 <th>Data Nascimento</th>
-                <th>Nome Empresa</th>
+                <th>ID Empresa</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -86,16 +87,17 @@
               <input type="number" class="form-control" id="cargaHoraria">
             </div>
             <div class="mb-3">
+              <label for="escolaridade" class="form-label">Escolaridade</label>
+              <input type="text" class="form-control" id="escolaridade">
+            </div>
+            <div class="mb-3">
               <label for="dataNascimento" class="form-label">Data de Nascimento</label>
               <input type="date" class="form-control" id="dataNascimento">
             </div>
             <div class="mb-3">
-              <label for="dataNascimento" class="form-label">Empresa</label>
-              <input type="text" class="form-control" id="nomeEmpresa">
+            <label for="dataNascimento" class="form-label">Id Empresa</label>
+              <input type="number" class="form-control" id="idEmpresa">
             </div>
-          
-          </div>
-          
           </form>
         </div>
         <div class="modal-footer">
@@ -104,7 +106,8 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
+
   <!-- -------------------------------------Fim Modal-------------------------------------------------- -->
 
 
@@ -116,7 +119,6 @@
     <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.8/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/cr-2.0.3/date-1.5.2/fc-5.0.1/fh-4.0.1/kt-2.12.1/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.7.1/sp-2.3.1/sl-2.0.3/sr-1.4.1/datatables.min.js"></script>
     <script src="lib/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
     <script src="index.js"></script>
-    <script src="./colaborador/editar-colaborador.js"></script>
 </body>
 
 </html>

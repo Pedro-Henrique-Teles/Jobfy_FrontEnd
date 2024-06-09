@@ -1,5 +1,5 @@
 body {
-        background-image: url(../img/Pexels\ Photo\ by\ Neo.png);
+        background-image: url(../img/Rectangle\ 1.png);
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;
@@ -7,3 +7,13 @@ body {
         font-family: "Lato", sans-serif;
         padding-top: 70px;
     }
+    .modal-content {
+        position: relative;
+        z-index: 9999;
+    }
+    
+    #salvarBotao {
+        position: relative;
+        z-index: 10000;
+    }
+    
