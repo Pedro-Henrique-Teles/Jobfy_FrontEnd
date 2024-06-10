@@ -11,6 +11,7 @@ function listarColaboradores() {
                 var date = datetime.toISOString().split('T')[0];
                 html += `<tr><td>` + data.name + `</td>`;
                 html += `<td>` + data.email + `</td>`;
+                html += `<td>` + data.senha + `</td>`;
                 html += `<td>` + data.cpf + `</td>`;
                 html += `<td>` + data.telefone + `</td>`;
                 html += `<td>` + data.salario + `</td>`;
@@ -21,7 +22,7 @@ function listarColaboradores() {
                 html += `<td>` + data.empresa.id + `</td>`;
                 html += `<td>`; 
                 html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'), ` + data.id + `)"><i class="fa fa-edit"></i></button> `;
-                html += `<a href="#" onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></a>`;
+                html += `<button onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></button>`;
                 html += `</td></tr>`;
             });
 
@@ -52,6 +53,7 @@ function preencherModal(data, id) {
     console.log(data);
     $("#nome").val(data.name);
     $("#email").val(data.email);
+    $("#email").val(data.senha);
     $("#cpf").val(data.cpf);
     $("#telefone").val(data.telefone);
     $("#salario").val(data.salario);
@@ -68,6 +70,7 @@ function preencherModal(data, id) {
 function limparModal() {
     $("#nome").val('');
     $("#email").val('');
+    $("#senha").val('');
     $("#cpf").val('');
     $("#telefone").val('');
     $("#salario").val('');
@@ -90,6 +93,7 @@ $("#salvarBotao").click(function(event) {
     var colaborador = {
         'name': $("#nome").val(),
         'email': $("#email").val(),
+        'senha': $("#senha").val(),
         'cpf': $("#cpf").val(),
         'telefone': $("#telefone").val(),
         'salario': $("#salario").val(),
@@ -127,4 +131,32 @@ $("#salvarBotao").click(function(event) {
             alert(message);
         }
     });
+});
+function removerColaborador(id) {
+    if (confirm('Tem certeza de que deseja remover este colaborador?')) {
+        $.ajax({
+            url: 'http://localhost:8080/api/colaborador/' + id,
+            type: 'DELETE',
+            success: function(result) {
+                // Atualize a tabela ou faça algo
+                alert('Colaborador removido com sucesso!');
+                listarColaboradores();
+            },
+            error: function(request,msg,error) {
+                // Trate o erro
+                alert('Erro ao remover o colaborador!');
+            }
+        });
+    }
+}
+
+$.ajax({
+    url: 'http://localhost:8080/api/colaborador/cont',
+    type: 'get',
+    success: function(result) {
+        $('#countColab').text(result);
+    },
+    error: function() {
+        console.log('Erro ao obter a contagem de colaboradores');
+    }
 });
