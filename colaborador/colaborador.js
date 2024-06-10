@@ -53,7 +53,7 @@ function preencherModal(data, id) {
     console.log(data);
     $("#nome").val(data.name);
     $("#email").val(data.email);
-    $("#email").val(data.senha);
+    $("#senha").val(data.senha);
     $("#cpf").val(data.cpf);
     $("#telefone").val(data.telefone);
     $("#salario").val(data.salario);
