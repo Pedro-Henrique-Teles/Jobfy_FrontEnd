@@ -1,3 +1,5 @@
+var modo = null;
+
 function listarColaboradores() {
     $.ajax({
         url: 'http://localhost:8080/api/colaborador',
@@ -19,7 +21,7 @@ function listarColaboradores() {
                 html += `<td>` + data.escolaridade + `</td>`;
                 html += `<td>` + data.cargaHoraria + `</td>`;
                 html += `<td>` + date + `</td>`;
-                html += `<td>` + data.empresa.id + `</td>`;
+                html += `<td>` + data.empresa.name + `</td>`;
                 html += `<td>`; 
                 html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'), ` + data.id + `)"><i class="fa fa-edit"></i></button> `;
                 html += `<button onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></button>`;
@@ -34,7 +36,6 @@ function listarColaboradores() {
     });
 }
 
-
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getUTCMonth() + 1),
@@ -48,9 +49,12 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
+
 function preencherModal(data, id) {
     data = JSON.parse(data);
     console.log(data);
+    modo = "Editar";
+    $("#editColab").text(modo + " Colaborador");
     $("#nome").val(data.name);
     $("#email").val(data.email);
     $("#senha").val(data.senha);
@@ -58,16 +62,17 @@ function preencherModal(data, id) {
     $("#telefone").val(data.telefone);
     $("#salario").val(data.salario);
     $("#areaInteresse").val(data.areaInteresse);
-    $("#escolaridade").val(data.areaInteresse);
+    $("#escolaridade").val(data.escolaridade);
     $("#cargaHoraria").val(data.cargaHoraria);
     $("#dataNascimento").val(formatDate(new Date(data.dataNascimento)));
-    $("#idEmpresa").val(data.empresa.id);
+    carregarEmpresas(data.empresa.id); // Carregar as empresas e selecionar a atual
     colaboradorId = id;
     console.log(colaboradorId);
 }
 
-
 function limparModal() {
+    modo = "Cadastrar";
+    $("#editColab").text(modo + " Colaborador");
     $("#nome").val('');
     $("#email").val('');
     $("#senha").val('');
@@ -79,6 +84,9 @@ function limparModal() {
     $("#escolaridade").val('');
     $("#dataNascimento").val('');
     $('#idEmpresa').val('');
+    colaboradorId = null;
+    carregarEmpresas(); // Carregar as empresas quando limpar o modal
+    console.log(colaboradorId);
 }
 
 $("#modalCadastro").click(limparModal);
@@ -126,12 +134,14 @@ $("#salvarBotao").click(function(event) {
             listarColaboradores();
             colaboradorId = null;  // Limpe o colaboradorId após a operação bem-sucedida
         },
-        error: function() {
+        error: function(res) {
             var message = colaboradorId === null ? 'Erro ao criar o colaborador!' : 'Erro ao atualizar o colaborador!';
-            alert(message);
+            console.log(res.responseText);
+            alert(message + " - "+ res.responseText);
         }
     });
 });
+
 function removerColaborador(id) {
     if (confirm('Tem certeza de que deseja remover este colaborador?')) {
         $.ajax({
@@ -160,3 +170,29 @@ $.ajax({
         console.log('Erro ao obter a contagem de colaboradores');
     }
 });
+
+function carregarEmpresas(selectedEmpresaId) {
+    $.ajax({
+        url: 'http://localhost:8080/api/empresa',
+        type: 'get',
+        dataType: 'json',
+        success: function (result) {
+            var select = $("#idEmpresa");
+            select.empty();  // Limpar as opções atuais
+            select.append('<option value="" disabled>Selecione uma empresa</option>');
+
+            $.each(result, function (_i, data) {
+                var selected = data.id == selectedEmpresaId ? 'selected' : '';
+                select.append('<option value="' + data.id + '" ' + selected + '>' + data.name + '</option>');
+            });
+
+            if (!selectedEmpresaId) {
+                select.val('');
+                select.prop('selectedIndex', 0);  // Volta para a primeira opção se nenhuma empresa for selecionada
+            }
+        },
+        error: function() {
+            console.log('Erro ao carregar as empresas');
+        }
+    });
+}
