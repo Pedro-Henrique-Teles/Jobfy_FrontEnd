@@ -1,4 +1,8 @@
-function listarEmpresa() {
+// empresa.js
+
+var modo = null;
+
+function listarEmpresas() {
     $.ajax({
         url: 'http://localhost:8080/api/empresa',
         type: 'get',
@@ -12,7 +16,7 @@ function listarEmpresa() {
                 html += `<td>` + data.email + `</td>`;
                 html += `<td>` + data.setorAtividade + `</td>`;
                 html += `<td>` + data.vagas + `</td>`;
-                html += `<td>`; 
+                html += `<td>`;
                 html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'), ` + data.id + `)"><i class="fa fa-edit"></i></button> `;
                 html += `<button onclick="removerEmpresa(` + data.id + `)"><i class="fa fa-trash"></i></button>`;
                 html += `</td></tr>`;
@@ -26,11 +30,12 @@ function listarEmpresa() {
     });
 }
 
-
 function preencherModal(data, id) {
     data = JSON.parse(data);
     console.log(data);
-     $("#nome").val(data.name);
+    modo = "Editar";
+    $("#editEmpresa").text(modo + " Empresa");
+    $("#nome").val(data.name);
     $("#cnpj").val(data.cnpj);
     $("#email").val(data.email);
     $("#setorAtividade").val(data.setorAtividade);
@@ -39,18 +44,20 @@ function preencherModal(data, id) {
     console.log(empresaId);
 }
 
-
 function limparModal() {
+    modo = "Cadastrar";
+    $("#editEmpresa").text(modo + " Empresa");
     $("#nome").val('');
     $("#email").val('');
     $("#cnpj").val('');
     $("#setorAtividade").val('');
     $("#vagas").val('');
+    empresaId = null;
 }
 
 $("#modalCadastro").click(limparModal);
 
-$(document).ready(listarEmpresa);
+$(document).ready(listarEmpresas);
 
 var empresaId = null;
 
@@ -82,15 +89,17 @@ $("#salvarBotao").click(function(event) {
             var message = empresaId === null ? 'Empresa criada com sucesso!' : 'Empresa atualizada com sucesso!';
             alert(message);
             $('#myModal').modal('hide');
-            listarColaboradores();
-            empresaId = null;  // Limpe o colaboradorId após a operação bem-sucedida
+            listarEmpresas();
+            empresaId = null;  // Limpe o empresaId após a operação bem-sucedida
         },
-        error: function() {
-            var message = empresaId === null ? 'Erro ao criar a empresa!' : 'Erro ao criar a empresa';
-            alert(message);
+        error: function(res) {
+            var message = empresaId === null ? 'Erro ao criar a empresa!' : 'Erro ao atualizar a empresa!';
+            console.log(res.responseText);
+            alert(message + " - "+ res.responseText);
         }
     });
 });
+
 function removerEmpresa(id) {
     if (confirm('Tem certeza de que deseja remover esta empresa?')) {
         $.ajax({
@@ -99,21 +108,23 @@ function removerEmpresa(id) {
             success: function(result) {
                 // Atualize a tabela ou faça algo
                 alert('Empresa removida com sucesso!');
-                listarEmpresa();
+                listarEmpresas();
             },
-            error: function(request,msg,error) {
+            error: function(request, msg, error) {
                 // Trate o erro
-                alert('Erro ao remover a empresa!');
+                console.log('Erro ao remover a empresa!', request);
+                alert('Erro ao remover a empresa - Há funcionarios nela');
             }
         });
     }
 }
 
+
 $.ajax({
     url: 'http://localhost:8080/api/empresa/cont',
     type: 'get',
     success: function(result) {
-        $('#countColab').text(result);
+        $('#countEmpresas').text(result);
     },
     error: function() {
         console.log('Erro ao obter a contagem de empresas');

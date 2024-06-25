@@ -21,7 +21,7 @@ function listarColaboradores() {
                 html += `<td>` + data.escolaridade + `</td>`;
                 html += `<td>` + data.cargaHoraria + `</td>`;
                 html += `<td>` + date + `</td>`;
-                html += `<td>` + data.empresa.name + `</td>`;
+                html += `<td>` + (data.empresa ? data.empresa.name : 'N/A') + `</td>`;
                 html += `<td>`; 
                 html += `<button class="btn" data-bs-toggle="modal" data-bs-target="#myModal" onclick="preencherModal(decodeURIComponent('` + encodeURIComponent(JSON.stringify(data)) + `'), ` + data.id + `)"><i class="fa fa-edit"></i></button> `;
                 html += `<button onclick="removerColaborador(` + data.id + `)"><i class="fa fa-trash"></i></button>`;
