@@ -95,7 +95,7 @@ $("#salvarBotao").click(function(event) {
         error: function(res) {
             var message = empresaId === null ? 'Erro ao criar a empresa!' : 'Erro ao atualizar a empresa!';
             console.log(res.responseText);
-            alert(message + " - "+ res.responseText);
+            alert(message + " - " + res.responseText);
         }
     });
 });
